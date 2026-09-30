@@ -8,11 +8,11 @@ Integrate [`shahvirb/hermes-agent`](https://github.com/shahvirb/hermes-agent) in
 ## Files
 
 - Add `docker-compose.yaml` based on the upstream deployment.
-- Add `hermes.env.tpl` containing the full upstream environment template.
+- Add `hermes.env.tpl` containing the full upstream `main` environment template plus the deployment-specific settings and `op://` references.
 - Generate `hermes.env` locally from `hermes.env.tpl` with `op-unpack.sh`; never commit it.
-- Add `.gitignore` rules for `hermes.env`.
-- Retain the upstream `AGENTS.md` deployment guidance.
-- Add `.env -> ../.env` so Compose can resolve shared Radon variables from the stack directory.
+- Add a repository-root `.gitignore` entry for `stack-hermes/hermes.env`.
+- Add `AGENTS.md` with the upstream deployment guidance adapted to `hermes.env.tpl`, `hermes.env`, and this stack's render command.
+- Retain and verify the existing `stack-hermes/.env -> ../.env` symlink so Compose can resolve shared Radon variables from the stack directory.
 
 ## Compose Configuration
 
@@ -37,22 +37,29 @@ Integrate [`shahvirb/hermes-agent`](https://github.com/shahvirb/hermes-agent) in
 
 - Preserve the upstream 1Password `op://` references in `hermes.env.tpl`.
 - Keep generated `hermes.env` out of version control.
+- Let the Hermes image initialize `/opt/data` ownership using `HERMES_UID` and `HERMES_GID`.
 - Enable the API server and dashboard.
 - Retain `API_SERVER_CORS_ORIGINS=*`.
 - Use the configured dashboard basic-auth username, password, and session secret.
 - Keep `HERMES_WRITE_SAFE_ROOT` empty as specified by the deployment requirements.
 - Keep `TERMINAL_ENV=local`.
+- Document that publishing both ports on all host interfaces with wildcard CORS is an intentional trusted-network decision, not a default-safe configuration.
+- Document that the Docker socket, SSH-key mount, and writable gitsource mount give Hermes broad control over the host environment.
+- Document the residual risk that full `docker compose config` output may expose rendered secret values.
 
 ## Deployment Workflow
 
 1. Run `/home/shahvirb/gitsource/utils/op-unpack.sh` from the Radon root to render `stack-hermes/hermes.env`.
-2. Run the existing stack controller so Compose executes from `stack-hermes` and resolves the shared `.env` symlink.
-3. Pull `nousresearch/hermes-agent:latest`.
-4. Start the Hermes service.
-5. Validate the rendered Compose configuration with `docker compose config`.
+2. Verify that `stack-hermes/.env` points to the shared Radon `.env`.
+3. Run the existing stack controller's Compose config operation from the Radon root before pulling or starting the service. Inspect the full rendered configuration as required, accepting the documented secret-output risk.
+4. Pull `nousresearch/hermes-agent:latest`.
+5. Start the Hermes service with the existing stack controller.
 6. Confirm the container is running and inspect startup logs.
-7. Smoke-test the API server and dashboard endpoints using their configured authentication.
-8. Confirm Hermes can access the mounted workspace and Docker socket.
+7. Smoke-test `GET http://localhost:8642/health` and the dashboard root on port `9119` for reachability. Expect the API health endpoint to return `200`; an authentication challenge or redirect from the protected dashboard is an expected reachable response.
+8. Confirm the mounts explicitly:
+   - `docker exec hermes test -d /home/shahvirb/gitsource`
+   - `docker exec hermes test -S /var/run/docker.sock`
+   - `docker exec hermes docker info`
 
 ## Explicit Non-Goals
 
