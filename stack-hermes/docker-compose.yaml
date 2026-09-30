@@ -1,1 +1,26 @@
 services:
+  hermes:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes
+    restart: unless-stopped
+    command: gateway run
+    ports:
+      - "8642:8642"
+      - "9119:9119"
+    env_file:
+      - hermes.env
+    environment:
+      TZ: ${TZ}
+      HERMES_UID: ${PUID}
+      HERMES_GID: ${PGID}
+    volumes:
+      - ${DOCKERDATADIR}/hermes:/opt/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/shahvirb/.ssh:/ssh:ro
+      - /home/shahvirb/gitsource:/home/shahvirb/gitsource
+    working_dir: /workspace
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: '4.0'
