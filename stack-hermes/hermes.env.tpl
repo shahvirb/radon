@@ -542,16 +542,16 @@ IMAGE_TOOLS_DEBUG=false
 # at https://www.reddit.com/prefs/apps and paste its id and secret here.
 # REDDIT_CLIENT_ID=
 # REDDIT_CLIENT_SECRET=
-API_SERVER_KEY=op://Dev - Home Lab/hermes mediaserver2/api server key
+API_SERVER_KEY=op://Dev - Home Lab/hermes radon/api server key
 OPENCODE_GO_API_KEY=op://Dev - Home Lab/opencode go API key/password
 TERMINAL_ENV=local
 
 # =============================================================================
 # DASHBOARD AUTHENTICATION
 # =============================================================================
-HERMES_DASHBOARD_BASIC_AUTH_USERNAME=op://Dev - Home Lab/hermes mediaserver2/username
-HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=op://Dev - Home Lab/hermes mediaserver2/password
-HERMES_DASHBOARD_BASIC_AUTH_SECRET=op://Dev - Home Lab/hermes mediaserver2/secret
+HERMES_DASHBOARD_BASIC_AUTH_USERNAME=op://Dev - Home Lab/hermes radon/username
+HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=op://Dev - Home Lab/hermes radon/password
+HERMES_DASHBOARD_BASIC_AUTH_SECRET=op://Dev - Home Lab/hermes radon/secret
 
 # =============================================================================
 # DOCKER CONTAINER SETTINGS
